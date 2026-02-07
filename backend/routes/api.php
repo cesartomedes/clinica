@@ -10,6 +10,9 @@ use App\Http\Controllers\PatientController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\VaccineController;
 use App\Http\Controllers\ApplicationController;
+use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\StudentReportController;
 
 /*
 |--------------------------------------------------------------------------|
@@ -97,4 +100,10 @@ Route::middleware(['auth:api', 'token.refresh', 'role:superadmin'])->group(funct
     Route::post('/superadmin/restore', [BackupController::class, 'restore']);
 });
 
+// rutas para resetar la password
+Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink']);
+Route::post('/reset-password', [ResetPasswordController::class, 'reset']);
 
+
+// Ruta para descargar pdf de estudiantes
+Route::get('/students/{id}/pdf', [StudentReportController::class, 'download']);

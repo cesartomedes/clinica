@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Pencil, Trash2, Eye } from "lucide-react";
+import { Pencil, Trash2, Eye, FileText } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/axiosInstance";
 
@@ -11,7 +11,6 @@ export default function EstudiantesList() {
   const fetchStudents = async () => {
     try {
       const res = await api.get("/students");
-      console.log("Respuesta completa de /students:", res);
       const data = Array.isArray(res.data) ? res.data : res.data.data;
       setStudents(data || []);
     } catch (err) {
@@ -41,6 +40,29 @@ export default function EstudiantesList() {
       setStudents((prev) => prev.filter((s) => s.id !== id));
     } catch (err) {
       console.error("❌ Error al eliminar:", err);
+    }
+  };
+
+  // 👉 NUEVO: Descargar PDF
+  const handleDownloadPDF = async (id) => {
+    try {
+      const response = await api.get(`/students/${id}/pdf`, {
+        responseType: "blob",
+      });
+
+      const url = window.URL.createObjectURL(
+        new Blob([response.data], { type: "application/pdf" })
+      );
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `reporte_estudiante_${id}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error("❌ Error al descargar el PDF:", error);
+      alert("No se pudo generar el reporte");
     }
   };
 
@@ -82,6 +104,7 @@ export default function EstudiantesList() {
                     >
                       <Eye size={16} />
                     </button>
+
                     <button
                       onClick={() => handleEdit(s.id)}
                       className="p-2 bg-yellow-400 text-white rounded hover:bg-yellow-500"
@@ -89,6 +112,15 @@ export default function EstudiantesList() {
                     >
                       <Pencil size={16} />
                     </button>
+
+                    <button
+                      onClick={() => handleDownloadPDF(s.id)}
+                      className="p-2 bg-green-600 text-white rounded hover:bg-green-700"
+                      title="Generar reporte PDF"
+                    >
+                      <FileText size={16} />
+                    </button>
+
                     <button
                       onClick={() => handleDelete(s.id)}
                       className="p-2 bg-red-500 text-white rounded hover:bg-red-600"
