@@ -1,45 +1,31 @@
-// src/pages/Auth/Login.jsx
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import useAuth from '../../hooks/useAuth';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "../../api/axiosInstance";
 
-const Login = () => {
-  const { login } = useAuth();
+const ForgotPassword = () => {
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState(null);
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = async (e) => {
+  const submit = async (e) => {
     e.preventDefault();
-    setError(null);
     setLoading(true);
+    setError("");
+    setMessage("");
 
     try {
-      const resp = await login({ email, password });
-      const user = resp.data.user;
-
-      switch (user.role) {
-        case 'superadmin':
-          navigate('/dashboard/superadmin');
-          break;
-        case 'admin':
-          navigate('/dashboard/admin');
-          break;
-        case 'profesor':
-          navigate('/dashboard/profesor');
-          break;
-        case 'estudiante':
-        case 'alumno':
-          navigate('/dashboard/estudiante');
-          break;
-        default:
-          navigate('/login');
-      }
+      await axios.post("/forgot-password", { email });
+      setMessage("📧 Revisa tu correo para restablecer tu contraseña");
     } catch (err) {
-      setError('Credenciales inválidas o error de servidor.');
+      // Si el backend envía 404, mostramos su mensaje
+      if (err.response?.status === 404) {
+        setError(err.response.data.message); // "Este usuario no está registrado..."
+      } else {
+        setError("No se pudo enviar el correo. Intenta nuevamente.");
+      }
     } finally {
       setLoading(false);
     }
@@ -57,13 +43,13 @@ const Login = () => {
       <div className="relative z-10 w-full max-w-md px-6">
         <div className="bg-white/90 backdrop-blur-md shadow-2xl rounded-2xl p-8">
           <h2 className="text-3xl font-bold text-center text-gray-800 mb-2">
-            Bienvenido 👋
+            ¿Olvidaste tu contraseña? 🔐
           </h2>
           <p className="text-center text-gray-500 mb-6">
-            Inicia sesión para continuar
+            Te enviaremos un enlace para restablecerla
           </p>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={submit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Correo electrónico
@@ -78,22 +64,12 @@ const Login = () => {
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Contraseña
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="••••••••"
-                required
-              />
-            </div>
-
             {error && (
               <p className="text-red-600 text-sm text-center">{error}</p>
+            )}
+
+            {message && (
+              <p className="text-green-600 text-sm text-center">{message}</p>
             )}
 
             <button
@@ -101,18 +77,18 @@ const Login = () => {
               disabled={loading}
               className="w-full bg-blue-600 text-white py-2.5 rounded-lg font-semibold hover:bg-blue-700 transition duration-200 disabled:opacity-60"
             >
-              {loading ? 'Ingresando...' : 'Iniciar sesión'}
+              {loading ? "Enviando..." : "Enviar enlace"}
             </button>
           </form>
 
-          {/* Olvidé contraseña */}
+          {/* Volver a login */}
           <div className="mt-6 text-center">
             <button
               type="button"
               className="text-sm text-blue-600 hover:underline"
-              onClick={() => navigate('/forgot-password')}
+              onClick={() => navigate("/login")}
             >
-              ¿Olvidaste tu contraseña?
+              ← Volver al inicio de sesión
             </button>
           </div>
         </div>
@@ -121,4 +97,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ForgotPassword;

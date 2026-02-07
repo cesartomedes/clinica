@@ -3,12 +3,13 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\PatientController;
-use App\Http\Controllers\VaccineController;
-use App\Http\Controllers\ApplicationController;
+use App\Http\Controllers\BackupController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SchoolController;
+use App\Http\Controllers\PatientController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\VaccineController;
+use App\Http\Controllers\ApplicationController;
 
 /*
 |--------------------------------------------------------------------------|
@@ -58,8 +59,8 @@ Route::delete('/admin/users/{id}', function($id) {
 })->middleware('role:superadmin');
 
     // CRUD vacunas y pacientes
-    Route::apiResource('vaccines', VaccineController::class)->middleware('role:super_admin,admin');
-    Route::apiResource('patients', PatientController::class)->middleware('role:super_admin,admin');
+    Route::apiResource('vaccines', VaccineController::class)->middleware('role:superadmin,admin');
+    Route::apiResource('patients', PatientController::class)->middleware('role:superadmin,admin');
 
     // CRUD aplicaciones de vacunas
     Route::apiResource('applications', ApplicationController::class)
@@ -88,6 +89,12 @@ Route::prefix('schools')->group(function () {
 // Rutas de estudiantes (solo admin o superadmin)
 Route::middleware(['auth:api', 'token.refresh', 'role:superadmin,admin'])->group(function() {
     Route::apiResource('students', StudentController::class);
+});
+
+// respaldo de la base de datos, solo el superadmin 
+Route::middleware(['auth:api', 'token.refresh', 'role:superadmin'])->group(function () {
+    Route::post('/superadmin/backup', [BackupController::class, 'backup']);
+    Route::post('/superadmin/restore', [BackupController::class, 'restore']);
 });
 
 

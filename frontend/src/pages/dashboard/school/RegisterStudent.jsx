@@ -93,15 +93,20 @@ export default function RegisterStudent() {
           peso: s.peso || "",
           talla: s.talla || "",
           circunferencia_braquial: s.circunferencia_braquial || "",
-          bucal: s.medical_record?.bucal || "",
-          caries: s.medical_record?.caries || "",
-          dif_visual: s.medical_record?.dif_visual || "",
-          vacunado: s.medical_record?.vacunado || "",
+
+          // 🔹 Medical Record
+          bucal: s.medical_record?.bucal ? "SI" : "NO",
+          caries: s.medical_record?.caries ? "SI" : "NO",
+          dif_visual: s.medical_record?.dif_visual ? "SI" : "NO",
+          vacunado: s.medical_record?.vacunado ? "SI" : "NO",
           dosis: s.medical_record?.dosis || "",
-          desparasitado: s.medical_record?.desparasitado || "",
+          desparasitado: s.medical_record?.desparasitado ? "SI" : "NO",
           observaciones: s.medical_record?.observaciones || "",
+
           docente: s.docente || "",
           cedula_escolar: s.cedula_escolar || "",
+
+          // 🔹 Representative
           representante_nombre: s.representative?.nombre || "",
           representante_cedula: s.representative?.cedula || "",
           representante_telefono: s.representative?.telefono || "",
@@ -179,6 +184,7 @@ export default function RegisterStudent() {
           desparasitado: yesNoToBool(student.desparasitado),
           observaciones: student.observaciones || null,
         },
+
         representative: {
           nombre: student.representante_nombre,
           cedula: student.representante_cedula || null,

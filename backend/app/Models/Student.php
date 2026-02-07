@@ -18,7 +18,13 @@ class Student extends Model
         'fecha_nacimiento',
         'peso',
         'talla',
-        'circunferencia_braquial'
+        'circunferencia_braquial',
+        'grado',
+        'matricula_v',
+        'matricula_h',
+        'matricula_total',
+        'cedula_escolar',
+        'docente',
     ];
 
     public function school()

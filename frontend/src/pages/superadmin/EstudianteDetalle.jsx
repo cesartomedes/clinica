@@ -28,29 +28,29 @@ export default function EstudianteDetalle() {
       </h1>
       <div className="bg-white p-6 rounded-lg shadow">
         <p>
-          <strong>Nombre:</strong> {student.name}
+          <strong>Nombre:</strong> {student.data.name}
         </p>
         <p>
-          <strong>Sexo:</strong> {student.sexo}
+          <strong>Sexo:</strong> {student.data.sexo}
         </p>
         <p>
-          <strong>Edad:</strong> {student.edad}
+          <strong>Edad:</strong> {student.data.edad}
         </p>
         <p>
-          <strong>Sección:</strong> {student.section_name}
+          <strong>Sección:</strong> {student.data.section_name}
         </p>
         <p>
-          <strong>Fecha de nacimiento:</strong> {student.fecha_nacimiento}
+          <strong>Fecha de nacimiento:</strong> {student.data.fecha_nacimiento}
         </p>
         <p>
-          <strong>Peso:</strong> {student.peso} kg
+          <strong>Peso:</strong> {student.data.peso} kg
         </p>
         <p>
-          <strong>Talla:</strong> {student.talla} cm
+          <strong>Talla:</strong> {student.data.talla} cm
         </p>
         <p>
           <strong>Circunferencia braquial:</strong>{" "}
-          {student.circunferencia_braquial} cm
+          {student.data.circunferencia_braquial} cm
         </p>
 
         <button

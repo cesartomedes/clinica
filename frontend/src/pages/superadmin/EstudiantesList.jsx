@@ -11,7 +11,7 @@ export default function EstudiantesList() {
   const fetchStudents = async () => {
     try {
       const res = await api.get("/students");
-      console.log("📦 Respuesta completa de /students:", res);
+      console.log("Respuesta completa de /students:", res);
       const data = Array.isArray(res.data) ? res.data : res.data.data;
       setStudents(data || []);
     } catch (err) {

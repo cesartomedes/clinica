@@ -27,19 +27,21 @@ export default function SuperAdminDashboard() {
 
   return (
     <div className="p-6 space-y-6">
-      <h1 className="text-3xl font-bold text-gray-800 mb-4">Panel SuperAdmin</h1>
+      <h1 className="text-3xl font-bold text-center text-gray-800 mb-4">
+        Panel SuperAdmin
+      </h1>
 
       <section>
         <RegisterSchool onRegistered={fetchSchools} />
       </section>
 
       <section>
-        <SchoolList 
-          schools={schools} 
-          setSchools={setSchools} 
-          loading={loading} 
-          setMessage={setMessage} 
-          message={message} 
+        <SchoolList
+          schools={schools}
+          setSchools={setSchools}
+          loading={loading}
+          setMessage={setMessage}
+          message={message}
         />
       </section>
     </div>

@@ -3,20 +3,90 @@
 namespace App\Http\Controllers;
 
 use App\Models\Student;
-use App\Models\Representative;
-use App\Models\MedicalRecord;
 use Illuminate\Http\Request;
 
 class StudentController extends Controller
 {
+    // 🔹 Listar todos los estudiantes
     public function index()
     {
-        $students = Student::with('representative', 'school', 'medicalRecord')->get();
+        $students = Student::with('representative', 'medicalRecord', 'school')->get();
         return response()->json($students);
     }
 
+    // 🔹 Registrar estudiante
     public function store(Request $request)
     {
+        $validated = $request->validate([
+            // 🔹 Datos del estudiante
+            'school_id' => 'required|exists:schools,id',
+            'section_name' => 'required|string|max:150',
+            'name' => 'required|string|max:150',
+            'sexo' => 'required|in:M,F',
+            'edad' => 'required|integer',
+            'fecha_nacimiento' => 'nullable|date',
+            'peso' => 'nullable|numeric',
+            'talla' => 'nullable|numeric',
+            'circunferencia_braquial' => 'nullable|numeric',
+            'grado' => 'nullable|string|max:50',
+            'matricula_v' => 'nullable|integer',
+            'matricula_h' => 'nullable|integer',
+            'matricula_total' => 'nullable|integer',
+            'cedula_escolar' => 'nullable|string|max:50',
+            'docente' => 'nullable|string|max:150',
+
+            // 🔹 Representante
+            'representative.nombre' => 'required|string|max:150',
+            'representative.cedula' => 'nullable|string|max:20',
+            'representative.telefono' => 'nullable|string|max:20',
+            'representative.direccion' => 'nullable|string',
+            'representative.parentesco' => 'nullable|string|max:50',
+
+            // 🔹 Registro médico
+            'medical_record.bucal' => 'nullable|boolean',
+            'medical_record.caries' => 'nullable|boolean',
+            'medical_record.dif_visual' => 'nullable|boolean',
+            'medical_record.vacunado' => 'nullable|boolean',
+            'medical_record.desparasitado' => 'nullable|boolean',
+            'medical_record.dosis' => 'nullable|string|max:50',
+            'medical_record.observaciones' => 'nullable|string|max:255',
+        ]);
+
+        // 🔹 Crear estudiante (solo campos del modelo Student)
+        $studentData = collect($validated)->except(['representative', 'medical_record'])->toArray();
+        $student = Student::create($studentData);
+
+        // 🔹 Crear relaciones
+        $student->representative()->create($validated['representative']);
+        $student->medicalRecord()->create($validated['medical_record']);
+
+        return response()->json([
+            'message' => 'Alumno registrado correctamente',
+            'student' => $student->load('representative', 'medicalRecord', 'school'),
+        ]);
+    }
+
+    // 🔹 Mostrar estudiante específico
+    public function show($id)
+    {
+        $student = Student::with('representative', 'medicalRecord', 'school')->find($id);
+
+        if (!$student) {
+            return response()->json(['message' => 'Estudiante no encontrado'], 404);
+        }
+
+        return response()->json(['data' => $student]);
+    }
+
+    // 🔹 Actualizar estudiante
+    public function update(Request $request, $id)
+    {
+        $student = Student::with('representative', 'medicalRecord')->find($id);
+
+        if (!$student) {
+            return response()->json(['message' => 'Estudiante no encontrado'], 404);
+        }
+
         $validated = $request->validate([
             'school_id' => 'required|exists:schools,id',
             'section_name' => 'required|string|max:150',
@@ -27,60 +97,59 @@ class StudentController extends Controller
             'peso' => 'nullable|numeric',
             'talla' => 'nullable|numeric',
             'circunferencia_braquial' => 'nullable|numeric',
-    
-            // Representante
+            'grado' => 'nullable|string|max:50',
+            'matricula_v' => 'nullable|integer',
+            'matricula_h' => 'nullable|integer',
+            'matricula_total' => 'nullable|integer',
+            'cedula_escolar' => 'nullable|string|max:50',
+            'docente' => 'nullable|string|max:150',
+
             'representative.nombre' => 'required|string|max:150',
             'representative.cedula' => 'nullable|string|max:20',
             'representative.telefono' => 'nullable|string|max:20',
             'representative.direccion' => 'nullable|string',
             'representative.parentesco' => 'nullable|string|max:50',
-    
-            // Registro médico
-            'medical_record.bucal' => 'required|boolean',
-            'medical_record.caries' => 'required|boolean',
-            'medical_record.dif_visual' => 'required|boolean',
-            'medical_record.vacunado' => 'required|boolean',
+
+            'medical_record.bucal' => 'nullable|boolean',
+            'medical_record.caries' => 'nullable|boolean',
+            'medical_record.dif_visual' => 'nullable|boolean',
+            'medical_record.vacunado' => 'nullable|boolean',
+            'medical_record.desparasitado' => 'nullable|boolean',
             'medical_record.dosis' => 'nullable|string|max:50',
-            'medical_record.desparasitado' => 'required|boolean',
             'medical_record.observaciones' => 'nullable|string|max:255',
         ]);
-    
-        // Crear estudiante
-        $student = Student::create($validated);
-    
-        // Crear representante
-        Representative::create([
-            'student_id' => $student->id,
-            ...$validated['representative']
-        ]);
-    
-        // Crear registro médico
-        MedicalRecord::create([
-            'student_id' => $student->id,
-            'bucal' => $validated['medical_record']['bucal'],
-            'caries' => $validated['medical_record']['caries'],
-            'dif_visual' => $validated['medical_record']['dif_visual'],
-            'vacunado' => $validated['medical_record']['vacunado'],
-            'dosis' => $validated['medical_record']['dosis'] ?? null,
-            'desparasitado' => $validated['medical_record']['desparasitado'],
-            'observaciones' => $validated['medical_record']['observaciones'] ?? null,
-        ]);
-    
+
+        $studentData = collect($validated)->except(['representative', 'medical_record'])->toArray();
+        $student->update($studentData);
+
+        // 🔹 Actualizar o crear relaciones
+        $student->representative
+            ? $student->representative->update($validated['representative'])
+            : $student->representative()->create($validated['representative']);
+
+        $student->medicalRecord
+            ? $student->medicalRecord->update($validated['medical_record'])
+            : $student->medicalRecord()->create($validated['medical_record']);
+
         return response()->json([
-            'message' => 'Alumno registrado correctamente',
-            'student' => $student->load('representative', 'medicalRecord', 'school'),
+            'message' => 'Estudiante actualizado correctamente',
+            'student' => $student->fresh()->load('representative', 'medicalRecord', 'school'),
         ]);
     }
-    
 
-    public function show($id)
+    // 🔹 Eliminar estudiante
+    public function destroy($id)
     {
-        $student = Student::with('representative', 'school', 'medicalRecord')->find($id);
+        $student = Student::find($id);
 
         if (!$student) {
-            return response()->json(['error' => 'Estudiante no encontrado'], 404);
+            return response()->json(['message' => 'Estudiante no encontrado'], 404);
         }
 
-        return response()->json($student, 200);
+        $student->medicalRecord?->delete();
+        $student->representative?->delete();
+        $student->delete();
+
+        return response()->json(['message' => 'Estudiante eliminado correctamente'], 200);
     }
 }

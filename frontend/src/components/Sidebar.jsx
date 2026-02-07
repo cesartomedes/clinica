@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+import { swalConfirm, swalToast, swalLoading } from "../utils/alerts";
 import {
   Menu,
   X,
@@ -17,9 +19,29 @@ export default function Sidebar() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
 
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
+  const handleLogout = async () => {
+    const result = await swalConfirm({
+      title: "¿Cerrar sesión?",
+      text: "Tu sesión actual se cerrará",
+      confirmButtonText: "Sí, cerrar sesión",
+      cancelButtonText: "Cancelar",
+    });
+
+    if (!result.isConfirmed) return;
+
+    swalLoading();
+
+    setTimeout(() => {
+      logout();
+      Swal.close();
+
+      navigate("/login");
+
+      swalToast({
+        icon: "success",
+        title: "Sesión cerrada correctamente",
+      });
+    }, 1200);
   };
 
   // 🔹 Configuración de menú por rol
@@ -48,9 +70,9 @@ export default function Sidebar() {
         path: "/dashboard/superadmin/usuarios",
       },
       {
-        name: "Configuración",
+        name: "Seguridad y respaldo",
         icon: <Settings size={20} />,
-        path: "/dashboard/configuracion",
+        path: "/dashboard/superadmin/sistema",
       },
     ];
   }
@@ -92,14 +114,17 @@ export default function Sidebar() {
 
   return (
     <aside
-      className={`${
-        isOpen ? "w-64" : "w-20"
-      } bg-blue-700 text-white min-h-screen transition-all duration-300 flex flex-col fixed md:static top-0 left-0 z-50`}
+      className={`
+      ${isOpen ? "w-64" : "w-20"}
+      bg-blue-700 text-white min-h-screen
+      transition-all duration-300 ease-in-out
+      flex flex-col fixed md:static top-0 left-0 z-50
+    `}
     >
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-blue-500">
         <span className={`font-bold text-lg ${!isOpen && "hidden"}`}>
-          SCNE Panel
+          CSI Clinica del Perú
         </span>
         <button
           onClick={() => setIsOpen(!isOpen)}

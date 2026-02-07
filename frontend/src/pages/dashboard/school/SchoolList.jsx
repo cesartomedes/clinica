@@ -42,7 +42,7 @@ export default function SchoolList({ schools, setSchools, loading, message, setM
                 <td className="px-4 py-2">{school.municipio || "-"}</td>
                 <td className="px-4 py-2">{school.parroquia || "-"}</td>
                 <td className="px-4 py-2 text-center space-x-2">
-                  <button onClick={() => alert(JSON.stringify(school, null, 2))} className="bg-blue-500 text-white px-2 py-1 rounded text-xs hover:bg-blue-600">Ver</button>
+                  {/* <button onClick={() => alert(JSON.stringify(school, null, 2))} className="bg-blue-500 text-white px-2 py-1 rounded text-xs hover:bg-blue-600">Ver</button> */}
                   <button onClick={() => handleDelete(school.id)} className="bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600">Eliminar</button>
                 </td>
               </tr>

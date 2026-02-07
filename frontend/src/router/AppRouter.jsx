@@ -12,14 +12,17 @@ import RegisterStudent from "../pages/dashboard/school/RegisterStudent";
 import EstudiantesList from "../pages/superadmin/EstudiantesList";
 import EstudianteDetalle from "../pages/superadmin/EstudianteDetalle";
 import UsersRegister from "../pages/superadmin/UsersRegister";
-
-import ProtectedRoute from "./ProtectedRoute"; // 👈 IMPORTANTE
-
+import ForgotPassword from "../pages/Auth/ForgotPassword";
+import ResetPassword from "../pages/Auth/ResetPassword";
+import ProtectedRoute from "./ProtectedRoute"; // 👈 IMPORTANTE NO QUITAR, esta es nuestra proteccion a las rutas
+import Sistema from "../pages/superadmin/Sistema";
 const AppRouter = () => {
   return (
     <Routes>
       {/* LOGIN */}
       <Route path="/login" element={<Login />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
 
       {/* SUPERADMIN */}
       <Route
@@ -45,6 +48,16 @@ const AppRouter = () => {
           element={<EstudianteDetalle />}
         />
         <Route path="usuarios" element={<UsersRegister />} />
+      </Route>
+      <Route
+        path="/dashboard/superadmin/sistema"
+        element={
+          <ProtectedRoute allowedRoles={["superadmin"]}>
+            <DashboardLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<Sistema />} />
       </Route>
 
       {/* ADMIN */}
