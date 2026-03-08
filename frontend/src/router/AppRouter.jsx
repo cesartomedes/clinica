@@ -16,6 +16,7 @@ import ForgotPassword from "../pages/Auth/ForgotPassword";
 import ResetPassword from "../pages/Auth/ResetPassword";
 import ProtectedRoute from "./ProtectedRoute"; // 👈 IMPORTANTE NO QUITAR, esta es nuestra proteccion a las rutas
 import Sistema from "../pages/superadmin/Sistema";
+import Statistics from "../pages/superadmin/Statistics";
 const AppRouter = () => {
   return (
     <Routes>
@@ -34,6 +35,7 @@ const AppRouter = () => {
         }
       >
         <Route index element={<SuperAdminDashboard />} />
+        <Route path="estadisticas" element={<Statistics />} />
         <Route path="estudiantes" element={<RegisterStudent />} />
         <Route
           path="/dashboard/superadmin/EstudiantesList"

@@ -30,7 +30,8 @@ export const swalToast = (options) => {
   });
 };
 
-export const swalLoading = (title = "Cerrando sesión...") => {
+// 🔹 Loading dinámico
+export const swalLoading = (title = "Procesando...") => {
   return Swal.fire({
     title,
     allowOutsideClick: false,

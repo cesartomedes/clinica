@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import useAuth from "../../../hooks/useAuth";
+import Swal from "sweetalert2";
+import { swalToast, swalLoading } from "../../../utils/alerts";
 
 export default function RegisterStudent() {
   const { id } = useParams();
@@ -55,7 +57,7 @@ export default function RegisterStudent() {
         setSchools(res.data.data || res.data);
       } catch (error) {
         console.error("❌ Error cargando escuelas:", error);
-        alert("Error al cargar las escuelas.");
+        swalToast({ icon: "error", title: "Error al cargar las escuelas." });
       }
     };
     fetchSchools();
@@ -115,7 +117,7 @@ export default function RegisterStudent() {
         });
       } catch (error) {
         console.error("❌ Error al cargar estudiante:", error);
-        alert("Error al cargar datos del estudiante.");
+        swalToast({ icon: "error", title: "Error al cargar datos del estudiante." });
       } finally {
         setLoading(false);
       }
@@ -153,7 +155,7 @@ export default function RegisterStudent() {
 
     const errorMsg = validateForm();
     if (errorMsg) {
-      alert(errorMsg);
+      swalToast({ icon: "error", title: errorMsg });
       return;
     }
 
@@ -161,7 +163,10 @@ export default function RegisterStudent() {
 
     try {
       const token = localStorage.getItem("access_token");
-      if (!token) return alert("Sesión expirada. Inicia sesión nuevamente.");
+      if (!token) {
+        swalToast({ icon: "error", title: "Sesión expirada. Inicia sesión nuevamente." });
+        return;
+      }
 
       const yesNoToBool = (val) => val === "SI";
 
@@ -184,7 +189,6 @@ export default function RegisterStudent() {
           desparasitado: yesNoToBool(student.desparasitado),
           observaciones: student.observaciones || null,
         },
-
         representative: {
           nombre: student.representante_nombre,
           cedula: student.representante_cedula || null,
@@ -206,6 +210,9 @@ export default function RegisterStudent() {
         : "http://localhost:8000/api/students";
       const method = isEdit ? "put" : "post";
 
+      // 🔹 Mostrar loading dinámico
+      swalLoading(isEdit ? "Actualizando estudiante..." : "Registrando estudiante...");
+
       await axios[method](url, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -213,11 +220,14 @@ export default function RegisterStudent() {
         },
       });
 
-      alert(
-        isEdit
-          ? "✅ Estudiante actualizado correctamente"
-          : "✅ Estudiante registrado correctamente"
-      );
+      Swal.close();
+
+      swalToast({
+        icon: "success",
+        title: isEdit
+          ? "Estudiante actualizado correctamente"
+          : "Estudiante registrado correctamente",
+      });
 
       // 🔹 Resetear formulario solo si es nuevo registro
       if (!isEdit) {
@@ -253,11 +263,14 @@ export default function RegisterStudent() {
         });
       }
     } catch (error) {
-      console.error(
-        "❌ Error al guardar estudiante:",
-        error.response?.data || error
-      );
-      alert("Error al guardar estudiante. Revisa los campos o permisos.");
+      console.error("❌ Error al guardar estudiante:", error.response?.data || error);
+
+      Swal.close();
+
+      swalToast({
+        icon: "error",
+        title: "Error al guardar estudiante",
+      });
     } finally {
       setSubmitting(false);
     }
@@ -521,7 +534,9 @@ export default function RegisterStudent() {
             }`}
           >
             {submitting
-              ? "Guardando..."
+              ? isEdit
+                ? "Actualizando..."
+                : "Guardando..."
               : isEdit
               ? "Actualizar Estudiante"
               : "Registrar Estudiante"}

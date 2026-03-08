@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Pencil, Trash2, Eye, FileText } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/axiosInstance";
+import Swal from "sweetalert2";
+import { swalConfirm, swalToast, swalLoading } from "../../utils/alerts";
 
 export default function EstudiantesList() {
   const [students, setStudents] = useState([]);
@@ -34,12 +36,37 @@ export default function EstudiantesList() {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("¿Seguro que deseas eliminar este alumno?")) return;
+    const result = await swalConfirm({
+      title: "¿Eliminar estudiante?",
+      text: "Esta acción no se puede deshacer.",
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    });
+
+    if (!result.isConfirmed) return;
+
     try {
+      swalLoading("Elimando estudiante...");
+
       await api.delete(`/students/${id}`);
+
       setStudents((prev) => prev.filter((s) => s.id !== id));
+
+      Swal.close();
+
+      swalToast({
+        icon: "success",
+        title: "Estudiante eliminado correctamente",
+      });
     } catch (err) {
       console.error("❌ Error al eliminar:", err);
+
+      Swal.close();
+
+      swalToast({
+        icon: "error",
+        title: "No se pudo eliminar el estudiante",
+      });
     }
   };
 

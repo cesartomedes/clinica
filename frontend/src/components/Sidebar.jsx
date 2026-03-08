@@ -11,6 +11,7 @@ import {
   Settings,
   LogOut,
   PencilLine,
+  BarChart3,
 } from "lucide-react";
 import useAuth from "../hooks/useAuth";
 
@@ -29,7 +30,7 @@ export default function Sidebar() {
 
     if (!result.isConfirmed) return;
 
-    swalLoading();
+    swalLoading("Cerrando sesión...");
 
     setTimeout(() => {
       logout();
@@ -65,6 +66,11 @@ export default function Sidebar() {
         path: "/dashboard/superadmin/EstudiantesList",
       },
       {
+        name: "Estadísticas",
+        icon: <BarChart3 size={20} />,
+        path: "/dashboard/superadmin/estadisticas",
+      },
+      {
         name: "Usuarios",
         icon: <Book size={20} />,
         path: "/dashboard/superadmin/usuarios",
@@ -88,6 +94,11 @@ export default function Sidebar() {
         name: "Estudiantes",
         icon: <Users size={20} />,
         path: "/dashboard/superadmin/estudiantes",
+      },
+      {
+        name: "Estadísticas",
+        icon: <BarChart3 size={20} />,
+        path: "/dashboard/superadmin/estadisticas",
       },
       {
         name: "Usuarios",
@@ -124,8 +135,9 @@ export default function Sidebar() {
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-blue-500">
         <span className={`font-bold text-lg ${!isOpen && "hidden"}`}>
-          CSI Clinica del Perú
+          CSI Clínica
         </span>
+
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="p-2 rounded hover:bg-blue-600 transition-colors"
@@ -158,16 +170,8 @@ export default function Sidebar() {
         )}
       </nav>
 
-      {/* Footer */}
-      <div className="p-4 border-t border-blue-500 mt-auto">
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-3 w-full text-left hover:bg-blue-600 px-3 py-2 rounded-lg"
-        >
-          <LogOut size={20} />
-          {isOpen && <span>Cerrar sesión</span>}
-        </button>
-      </div>
+     
+     
     </aside>
   );
 }
