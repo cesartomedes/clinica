@@ -134,8 +134,8 @@ export default function Sidebar() {
     >
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-blue-500">
-        <span className={`font-bold text-lg ${!isOpen && "hidden"}`}>
-          CSI Clínica
+        <span className={`font-bold text-sm ${!isOpen && "hidden"}`}>
+          U.E.N Dr. Jacinto Convit García
         </span>
 
         <button
@@ -169,9 +169,6 @@ export default function Sidebar() {
           </div>
         )}
       </nav>
-
-     
-     
     </aside>
   );
 }

@@ -94,7 +94,13 @@ th{
     border-top:1px solid #cbd5e1;
     padding-top:6px;
 }
-
+.address{
+    margin-top:25px;
+    text-align:center;
+    font-size:11px;
+    color:#374151;
+    line-height:1.4;
+}
 </style>
 </head>
 
@@ -197,6 +203,12 @@ Sello de la Institución
 </tr>
 </table>
 
+<div class="address">
+    Dirección de la Institución:<br>
+    Barrio “Las Flores” Parroquia Agua Salada colindando con el río Buena Vista.<br>
+    Calle Principal de Las Flores del Perú Viejo a 400 metros del vivero Las Flores<br>
+    por detrás del conector.
+    </div>
 
 <div class="footer">
 Documento generado automáticamente por el sistema • {{ now()->format('d/m/Y') }}
