@@ -9,7 +9,6 @@ import {
   Users,
   Book,
   Settings,
-  LogOut,
   PencilLine,
   BarChart3,
 } from "lucide-react";
@@ -132,18 +131,31 @@ export default function Sidebar() {
       flex flex-col fixed md:static top-0 left-0 z-50
     `}
     >
-      {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-blue-500">
-        <span className={`font-bold text-sm ${!isOpen && "hidden"}`}>
-          U.E.N Dr. Jacinto Convit García
-        </span>
+      {/* Header con logo */}
+      <div className="flex flex-col items-center p-4 border-b border-blue-500 relative">
 
+        {/* Logo */}
+        <img
+          src="/img/logo.png"
+          alt="Logo"
+          className={`${isOpen ? "w-12 h-12" : "w-8 h-8"} rounded-full object-cover mb-2 border-2 border-white shadow-md`}
+        />
+
+        {/* Nombre institución */}
+        {isOpen && (
+          <span className="font-semibold text-xs text-center leading-tight">
+            U.E.N Dr. Jacinto Convit García
+          </span>
+        )}
+
+        {/* Botón abrir/cerrar */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="p-2 rounded hover:bg-blue-600 transition-colors"
+          className="absolute right-3 top-3 p-1 rounded hover:bg-blue-600 transition-colors"
         >
-          {isOpen ? <X size={20} /> : <Menu size={20} />}
+          {isOpen ? <X size={18} /> : <Menu size={18} />}
         </button>
+
       </div>
 
       {/* Navegación */}
