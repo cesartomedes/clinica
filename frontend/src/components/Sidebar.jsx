@@ -9,6 +9,7 @@ import {
   Book,
   Settings,
   PencilLine,
+  LayoutDashboard,
 } from "lucide-react";
 import useAuth from "../hooks/useAuth";
 
@@ -17,13 +18,17 @@ export default function Sidebar() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
 
-
-
   let menuItems = [];
 
   // 🔥 SUPERADMIN
   if (user?.role === "superadmin") {
     menuItems = [
+      {
+        name: "Dashboard",
+        icon: <LayoutDashboard size={20} />,
+        path: "/dashboard/superadmin",
+      },
+
       {
         name: "Registro de Estudiantes",
         icon: <Users size={20} />,
@@ -90,11 +95,12 @@ export default function Sidebar() {
     >
       {/* Header */}
       <div className="flex flex-col items-center p-4 border-b border-blue-500 relative">
-
         <img
           src="/img/logo.png"
           alt="Logo"
-          className={`${isOpen ? "w-12 h-12" : "w-8 h-8"} rounded-full object-cover mb-2 border-2 border-white shadow-md`}
+          className={`${
+            isOpen ? "w-12 h-12" : "w-8 h-8"
+          } rounded-full object-cover mb-2 border-2 border-white shadow-md`}
         />
 
         {isOpen && (
@@ -134,7 +140,6 @@ export default function Sidebar() {
           </div>
         )}
       </nav>
-      
     </aside>
   );
 }
